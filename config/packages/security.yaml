@@ -1,0 +1,41 @@
+# config/packages/security.yaml
+
+security:
+    # 1) Hasher (zamiast "encoders" w starszych wersjach)
+    password_hashers:
+        App\Entity\User:
+            algorithm: auto
+
+    # 2) Providers
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    # 3) Firewalls
+    firewalls:
+        # Firewall obsługujący logowanie przez JSON
+        login:
+            pattern: ^/api/login
+            stateless: true
+            provider: app_user_provider
+            json_login:
+                check_path: /api/login
+                username_path: email
+                password_path: password
+                success_handler: lexik_jwt_authentication.handler.authentication_success
+                failure_handler: lexik_jwt_authentication.handler.authentication_failure
+
+        # Firewall obsługujący pozostałe zasoby API (wymagające JWT)
+        api:
+            pattern: ^/api
+            stateless: true
+            provider: app_user_provider
+            jwt: ~   # z LexikJWTAuthenticationBundle
+
+    # 4) Reguły dostępu
+    access_control:
+        - { path: ^/api/login,       roles: PUBLIC_ACCESS }
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api,            roles: IS_AUTHENTICATED_FULLY }
