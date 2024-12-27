@@ -8,6 +8,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
+
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -41,6 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, JobOffer>
      */
+    #[MaxDepth(1)]
     #[ORM\OneToMany(targetEntity: JobOffer::class, mappedBy: 'company')]
     private Collection $jobOffers;
 
@@ -48,6 +52,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->jobOffers = new ArrayCollection();
     }
+
 
     public function getUserIdentifier(): string
     {
@@ -154,10 +159,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, JobOffer>
      */
-    public function getJobOffers(): Collection
-    {
-        return $this->jobOffers;
-    }
+//    public function getJobOffers(): Collection
+//    {
+//        return $this->jobOffers;
+//    }
 
     public function addJobOffer(JobOffer $jobOffer): static
     {

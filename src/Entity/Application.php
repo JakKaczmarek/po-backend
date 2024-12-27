@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ApplicationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
 
 #[ORM\Entity(repositoryClass: ApplicationRepository::class)]
 class Application
@@ -32,6 +33,7 @@ class Application
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $appliedAt = null;
 
+    #[MaxDepth(1)]
     #[ORM\ManyToOne(inversedBy: 'applications')]
     private ?JobOffer $jobOffer = null;
 
@@ -112,10 +114,10 @@ class Application
         return $this;
     }
 
-    public function getJobOffer(): ?JobOffer
-    {
-        return $this->jobOffer;
-    }
+//    public function getJobOffer(): ?JobOffer
+//    {
+//        return $this->jobOffer;
+//    }
 
     public function setJobOffer(?JobOffer $jobOffer): static
     {

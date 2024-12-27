@@ -7,13 +7,15 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\MaxDepth;
 #[ORM\Entity(repositoryClass: JobOfferRepository::class)]
 class JobOffer
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['public'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
@@ -30,13 +32,14 @@ class JobOffer
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $createdAt = null;
-
+    #[MaxDepth(1)]
     #[ORM\ManyToOne(inversedBy: 'jobOffers')]
     private ?User $company = null;
 
     /**
      * @var Collection<int, Application>
      */
+    #[MaxDepth(1)]
     #[ORM\OneToMany(targetEntity: Application::class, mappedBy: 'jobOffer')]
     private Collection $applications;
 
