@@ -36,30 +36,38 @@ class ApplicationController extends AbstractController
             return new JsonResponse(['error' => 'Job offer not found'], JsonResponse::HTTP_NOT_FOUND);
         }
 
+        // Pobieramy plik cvFile z żądania
         $file = $request->files->get('cvFile');
         if (!$file instanceof UploadedFile || $file->getClientOriginalExtension() !== 'pdf') {
             return new JsonResponse(['error' => 'Invalid CV file. Only PDF allowed'], JsonResponse::HTTP_BAD_REQUEST);
         }
 
-        $data = $request->request->all();
-
-        if (empty($data['firstName']) || empty($data['lastName']) || empty($data['email']) || empty($data['phone'])) {
-            return new JsonResponse(['error' => 'Missing required fields'], JsonResponse::HTTP_BAD_REQUEST);
+        // Pobieramy aktualnie zalogowanego użytkownika
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Unauthorized'], JsonResponse::HTTP_UNAUTHORIZED);
         }
 
+        // Przenosimy plik do katalogu upload
         $filesystem = new Filesystem();
         $filesystem->mkdir($this->uploadsDirectory);
         $cvFileName = uniqid() . '.' . $file->getClientOriginalExtension();
         $file->move($this->uploadsDirectory, $cvFileName);
 
+        // Tworzymy nowy obiekt Application, wypełniając danymi z zalogowanego użytkownika
         $application = new Application();
-        $application->setFirstName($data['firstName'])
-            ->setLastName($data['lastName'])
-            ->setEmail($data['email'])
-            ->setPhone($data['phone'])
+        $application
+            ->setFirstName($user->getFirstName())
+            ->setLastName($user->getLastName())
+            ->setEmail($user->getEmail())
+            ->setPhone($user->getPhone())
             ->setCvFile($cvFileName)
             ->setAppliedAt(new \DateTime())
-            ->setJobOffer($jobOffer);
+            ->setJobOffer($jobOffer)
+        ;
+
+        // Jeśli w encji Application masz pole user (relacja ManyToOne), możesz też je ustawić:
+        // $application->setUser($user);
 
         $entityManager->persist($application);
         $entityManager->flush();
