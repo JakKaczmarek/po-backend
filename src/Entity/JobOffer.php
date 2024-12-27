@@ -19,6 +19,9 @@ class JobOffer
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    private ?string $companyName = null;
+
+    #[ORM\Column(length: 255)]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -56,6 +59,18 @@ class JobOffer
     public function getTitle(): ?string
     {
         return $this->title;
+    }
+
+    public function getCompanyName(): ?string
+    {
+        return $this->companyName;
+    }
+
+    public function setCompanyName(?string $companyName): static
+    {
+        $this->companyName = $companyName;
+
+        return $this;
     }
 
     public function setTitle(string $title): static

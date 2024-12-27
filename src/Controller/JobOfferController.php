@@ -35,11 +35,14 @@ use HandleTrait;
         }
 
         $jobOffer = new JobOffer();
-        $jobOffer->setTitle($data['title'])
+        $jobOffer
+            ->setCompanyName($data['companyName'])
+            ->setTitle($data['title'])
             ->setDescription($data['description'])
             ->setLocation($data['location'])
             ->setSalary($data['salary'] ?? null)
             ->setCreatedAt(new \DateTime());
+
 
         $company = $this->getUser(); // Pobierz aktualnie zalogowaną firmę
         $jobOffer->setCompany($company);
@@ -66,6 +69,7 @@ use HandleTrait;
         $data = array_map(function (JobOffer $jobOffer) {
             return [
                 'id' => $jobOffer->getId(),
+                'companyName' => $jobOffer->getCompanyName(),
                 'title' => $jobOffer->getTitle(),
                 'location' => $jobOffer->getLocation(),
                 'salary' => $jobOffer->getSalary(),
@@ -82,6 +86,7 @@ use HandleTrait;
     {
         $data = [
             'id' => $jobOffer->getId(),
+            'companyName' => $jobOffer->getCompanyName(),
             'title' => $jobOffer->getTitle(),
             'description' => $jobOffer->getDescription(),
             'location' => $jobOffer->getLocation(),
