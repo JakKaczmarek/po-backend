@@ -67,13 +67,28 @@ use HandleTrait;
             return [
                 'id' => $jobOffer->getId(),
                 'title' => $jobOffer->getTitle(),
-                'description' => $jobOffer->getDescription(),
                 'location' => $jobOffer->getLocation(),
                 'salary' => $jobOffer->getSalary(),
                 'createdAt' => $jobOffer->getCreatedAt()->format('Y-m-d H:i:s'),
                 'company' => $jobOffer->getCompany()?->getEmail(),
             ];
         }, $jobOffers);
+
+        return new JsonResponse($data, JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/job-offer/{id}', name: 'job_offer_details', methods: ['GET'])]
+    public function getJobOffer(JobOffer $jobOffer): JsonResponse
+    {
+        $data = [
+            'id' => $jobOffer->getId(),
+            'title' => $jobOffer->getTitle(),
+            'description' => $jobOffer->getDescription(),
+            'location' => $jobOffer->getLocation(),
+            'salary' => $jobOffer->getSalary(),
+            'createdAt' => $jobOffer->getCreatedAt()->format('Y-m-d H:i:s'),
+            'company' => $jobOffer->getCompany()?->getEmail(),
+        ];
 
         return new JsonResponse($data, JsonResponse::HTTP_OK);
     }
