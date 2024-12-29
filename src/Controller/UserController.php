@@ -39,8 +39,12 @@ class UserController extends AbstractController
             ->setFirstName($data['firstName'])
             ->setLastName($data['lastName'])
             ->setPhone($data['phone'])
-            ->setCompany($data['isCompany'])
-            ->setRoles(['ROLE_USER']);
+            ->setCompany($data['isCompany']);
+            $roles = ['ROLE_USER'];
+    if ($data['isCompany']) {
+        $roles[] = 'ROLE_COMPANY';
+    }
+    $user->setRoles($roles);
 
         $entityManager->persist($user);
         $entityManager->flush();

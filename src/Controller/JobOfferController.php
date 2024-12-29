@@ -53,13 +53,6 @@ use HandleTrait;
         return new JsonResponse(['message' => 'Job offer created successfully'], JsonResponse::HTTP_CREATED);
     }
 
-//    #[Route('/api/job-offers', name: 'job_offer_list', methods: ['GET'])]
-//    public function listJobOffers(): JsonResponse
-//    {
-//        return new JsonResponse ($this->serializer->serialize($this->handle(new GetAll()),'json', [AbstractObjectNormalizer::ENABLE_MAX_DEPTH => true]), 200, [], true);
-//    }
-
-
     #[Route('/api/job-offers', name: 'job_offer_list', methods: ['GET'])]
     public function listJobOffers(JobOfferRepository $jobOfferRepository): JsonResponse
     {
@@ -94,6 +87,33 @@ use HandleTrait;
             'createdAt' => $jobOffer->getCreatedAt()->format('Y-m-d H:i:s'),
             'company' => $jobOffer->getCompany()?->getEmail(),
         ];
+
+        return new JsonResponse($data, JsonResponse::HTTP_OK);
+    }
+
+    #[Route('/api/user/job-offers', name: 'user_job_offers', methods: ['GET'])]
+    public function listUserJobOffers(JobOfferRepository $jobOfferRepository): JsonResponse
+    {
+        // Pobieramy aktualnie zalogowanego użytkownika
+        $user = $this->getUser();
+        if (!$user) {
+            return new JsonResponse(['error' => 'Unauthorized'], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        // Pobieramy oferty pracy należące do zalogowanego użytkownika
+        $jobOffers = $jobOfferRepository->findBy(['company' => $user]);
+
+        // Mapowanie danych na format JSON
+        $data = array_map(function (JobOffer $jobOffer) {
+            return [
+                'id' => $jobOffer->getId(),
+                'companyName' => $jobOffer->getCompanyName(),
+                'title' => $jobOffer->getTitle(),
+                'location' => $jobOffer->getLocation(),
+                'salary' => $jobOffer->getSalary(),
+                'createdAt' => $jobOffer->getCreatedAt()->format('Y-m-d H:i:s'),
+            ];
+        }, $jobOffers);
 
         return new JsonResponse($data, JsonResponse::HTTP_OK);
     }

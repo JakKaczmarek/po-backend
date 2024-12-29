@@ -1,0 +1,11 @@
+nelmio_cors:
+    defaults:
+        allow_origin: ['*'] # Pozwala na żądania z dowolnego źródła
+        allow_methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'] # Metody HTTP
+        allow_headers: ['Content-Type', 'Authorization'] # Nagłówki
+        expose_headers: ['Content-Type', 'Authorization'] # Nagłówki, które można odsłonić
+        max_age: 3600
+        allow_credentials: true # Zezwala na przesyłanie ciasteczek i danych uwierzytelniających
+    paths:
+        '^/': # Zastosowanie dla wszystkich endpointów
+            allow_origin: ['*']
